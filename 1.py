@@ -57,8 +57,8 @@ def cal_time(username):
     xiaoshi = tian*24+shi
     return shijian,xiaoshi
 
-username = '021210523'
-password = '99998888'
+username = ' '
+password = ' '
 save_file(username, password)
 shijian,xiaoshi = cal_time(username)
 print shijian
