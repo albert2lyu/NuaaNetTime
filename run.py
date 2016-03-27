@@ -54,11 +54,11 @@ def cal_time(username):
     shi = (shi + shijia) % 24
     tian = shijia
     shijian = str(tian) + '天' + str(shi) + '时' + str(fen) + '分' + str(miao) + '秒'
-    xiaoshi = tian*24+shi
+    xiaoshi = str(tian*24+shi)+'小时'
     return shijian,xiaoshi
 
-username = ' '
-password = ' '
+username = '021210523' #学号
+password = ' ' #校园网密码
 save_file(username, password)
 shijian,xiaoshi = cal_time(username)
 print shijian
