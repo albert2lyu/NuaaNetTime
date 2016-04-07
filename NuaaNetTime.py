@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 class NuaaNetTime:
 
     def __init__(self, name, pswd):
-        self.debug = 0
+        self.debug = 1
         self.name = name
         self.pswd = pswd
         self.headers = {
@@ -62,21 +62,24 @@ class NuaaNetTime:
 
     # 封装过的Get方式
     def _get(self, url, data=None):
-        session = self.session
-        r = session.get(url, headers=self.headers)
-        if r.status_code == 200:
-            return r.text.encode('utf-8')
-        else:
-            raise Exception('_get error')
+        session = self.login()
+        if session:
+            r = session.get(url, headers=self.headers)
+            if r.status_code == 200:
+                return r.text.encode('utf-8')
+            else:
+                raise Exception('_get error')
 
     # 封装过的Post方式
     def _post(self, url, datadata=None):
-        session = self.session
-        r = session.post(url, data=data, headers=self.headers)
-        if r.status_code == 200:
-            return r.text.encode('utf-8')
-        else:
-            raise Exception('_post error')
+        session = self.login()
+        if session:
+            r = session.post(url, data=datadata, headers=self.headers)
+            print r.status_code
+            if r.status_code == 200:
+                return r.text.encode('utf-8')
+            else:
+                raise Exception('_post error')
 
     # 登陆 保存cookie
     def login(self):
@@ -119,7 +122,45 @@ class NuaaNetTime:
         money = {'shenyu':timat[1], 'xiaofei':timat[2], 'chong':timat[3]}
         user = {'name':name, 'num':self.name}
         return {'user':user, 'money':money}
+
+    # 修改密码
+    def changePswd(self, pswd):
+        postdata = {
+            'username': self.name,
+            'oldPass': self.pswd,
+            'newPass': pswd
+        }
+        self._post('http://fuwu.nuaa.edu.cn/action/doChangePw.do', postdata)
+
+    # 扣费记录
+    def getKoufei(self, page):
+        data = self._get('http://fuwu.nuaa.edu.cn/user/chargeback.jhtm?p=' + str(page))
+        soup = BeautifulSoup(data, 'lxml')
+        trs = soup.find_all('tr')
+        ss = []
+        for tr in trs:
+            s = []
+            ths = tr.find_all('td')
+            for th in ths:
+                s.append(th.string)
+            ss.append(s)
+        del ss[0]
+        return ss
+
+    # 保存所有扣费记录文件
+    def saveKoufei(self):
+        html = self._get('http://fuwu.nuaa.edu.cn/user/chargeback.jhtm')
+        count = int(re.findall(r'\?p=(.+?)"', html)[-1])
+        with open('koufei.txt', 'w+') as f:
+            for i in xrange(1, count+1):
+                lists = self.getKoufei(i)
+                for j in lists:
+                    s = ','.join(j)
+                    f.write(s.encode('utf-8'))
+                    f.write('\n')
+
+
 name = '021210523'
 pswd = '99998888'
 nnt = NuaaNetTime(name, pswd)
-print nnt.getInfo()
+nnt.saveKoufei()
