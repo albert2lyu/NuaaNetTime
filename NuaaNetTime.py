@@ -180,7 +180,7 @@ class NuaaNetTime:
         count = int(re.findall(r'\?p=(.+?)"', html)[-1])
         with open('chongzhi.txt', 'w+') as f:
             for i in xrange(1, count + 1):
-                lists = self.getKoufei(i)
+                lists = self.getChong(i)
                 for j in lists:
                     s = ','.join(j)
                     f.write(s.encode('utf-8'))
@@ -200,7 +200,15 @@ class NuaaNetTime:
             ss.append(s)
         del ss[0]
         return ss
-name = '021210523'
-pswd = '99998888'
-nnt = NuaaNetTime(name, pswd)
-nnt.saveChong()
+
+    # 保存所有上网记录文件
+    def saveTime(self):
+        html = self._get('http://fuwu.nuaa.edu.cn/user/net_auth.jhtm')
+        count = int(re.findall(r'\?p=(.+?)"', html)[-1])
+        with open('shangwang.txt', 'w+') as f:
+            for i in xrange(1, count + 1):
+                lists = self.getTime(i)
+                for j in lists:
+                    s = ','.join(j)
+                    f.write(s.encode('utf-8'))
+                    f.write('\n')
