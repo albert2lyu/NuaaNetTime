@@ -8,14 +8,7 @@ import os
 import logging
 import requests
 import re
-import time
-import xml.dom.minidom
 import json
-import sys
-import math
-import subprocess
-import ssl
-import threading
 from bs4 import BeautifulSoup
 
 
