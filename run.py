@@ -58,7 +58,7 @@ def cal_time(username):
     return shijian,xiaoshi
 
 username = '021210523' #学号
-password = ' ' #校园网密码
+password = '99998888' #校园网密码
 save_file(username, password)
 shijian,xiaoshi = cal_time(username)
 print shijian
