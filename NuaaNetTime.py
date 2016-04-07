@@ -174,7 +174,18 @@ class NuaaNetTime:
         del ss[0]
         return ss
 
+    # 保存所有充值记录文件
+    def saveChong(self):
+        html = self._get('http://fuwu.nuaa.edu.cn/user/prepaid.jhtm')
+        count = int(re.findall(r'\?p=(.+?)"', html)[-1])
+        with open('chongzhi.txt', 'w+') as f:
+            for i in xrange(1, count + 1):
+                lists = self.getKoufei(i)
+                for j in lists:
+                    s = ','.join(j)
+                    f.write(s.encode('utf-8'))
+                    f.write('\n')
 name = '021210523'
 pswd = '99998888'
 nnt = NuaaNetTime(name, pswd)
-print nnt.getChong(1)
+nnt.saveChong()
