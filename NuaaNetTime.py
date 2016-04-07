@@ -16,12 +16,13 @@ import math
 import subprocess
 import ssl
 import threading
+from bs4 import BeautifulSoup
 
 
 class NuaaNetTime:
 
     def __init__(self, name, pswd):
-        self.debug = 1
+        self.debug = 0
         self.name = name
         self.pswd = pswd
         self.headers = {
@@ -30,7 +31,7 @@ class NuaaNetTime:
             'Referer': 'http://fuwu.nuaa.edu.cn/',
             'Host': 'fuwu.nuaa.edu.cn'
         }
-        nnt.login()
+        self.login()
 
     # 日志
     def _log(self, str, level = True):
@@ -110,8 +111,15 @@ class NuaaNetTime:
                 self._log('登陆错误，未知错误', False)
             return False
 
-
-
+    # 登陆账号信息 本月消费信息
+    def getInfo(self):
+        html = self._get('http://fuwu.nuaa.edu.cn/user/home.jhtm')
+        name = re.findall(r'<li>(.+?)，', html)[0]
+        timat = re.findall(r'</span><span class="home_detail">(.+?)</span>', html)
+        money = {'shenyu':timat[1], 'xiaofei':timat[2], 'chong':timat[3]}
+        user = {'name':name, 'num':self.name}
+        return {'user':user, 'money':money}
 name = '021210523'
 pswd = '99998888'
 nnt = NuaaNetTime(name, pswd)
+print nnt.getInfo()
