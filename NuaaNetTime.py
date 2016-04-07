@@ -159,8 +159,22 @@ class NuaaNetTime:
                     f.write(s.encode('utf-8'))
                     f.write('\n')
 
+    # 充值记录
+    def getChong(self, page):
+        data = self._get('http://fuwu.nuaa.edu.cn/user/prepaid.jhtm?p=' + str(page))
+        soup = BeautifulSoup(data, 'lxml')
+        trs = soup.find_all('tr')
+        ss = []
+        for tr in trs:
+            s = []
+            ths = tr.find_all('td')
+            for th in ths:
+                s.append(th.string)
+            ss.append(s)
+        del ss[0]
+        return ss
 
 name = '021210523'
 pswd = '99998888'
 nnt = NuaaNetTime(name, pswd)
-nnt.saveKoufei()
+print nnt.getChong(1)
